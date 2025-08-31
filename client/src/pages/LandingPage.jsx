@@ -35,6 +35,19 @@ export default function LandingPage() {
     }
   }
 
+  const downloadQRCode = () => {
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      const pngUrl = canvas.toDataURL('image/png');
+      const downloadLink = document.createElement('a');
+      downloadLink.href = pngUrl;
+      downloadLink.download = 'qr-code.png';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+  };
+
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>
   if (error) return <div className="text-red-600 text-center min-h-screen flex items-center justify-center">{error}</div>
   if (!link) return null
@@ -104,19 +117,24 @@ export default function LandingPage() {
         </div>
 
         {/* QR Code */}
-        <div className="mt-12">
-          <button
-            onClick={() => setShowQR(!showQR)}
-            className="text-sm text-gray-400 hover:text-white"
-          >
-            {showQR ? 'Hide QR Code' : 'Show QR Code'}
-          </button>
-          
-          {showQR && (
-            <div className="mt-4 bg-white p-4 rounded-lg inline-block">
-              <QRCodeSVG value={currentUrl} size={200} />
-            </div>
-          )}
+        <div className="mt-8 text-center">
+          <h3 className="text-lg font-medium mb-4">QR Code</h3>
+          <div className="inline-block p-4 bg-white rounded-lg shadow-lg">
+            <QRCodeSVG
+              value={window.location.href}
+              size={200}
+              level="M"
+              includeMargin={true}
+            />
+          </div>
+          <div className="mt-4">
+            <button
+              onClick={() => downloadQRCode()}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Download QR Code
+            </button>
+          </div>
         </div>
       </div>
     </div>

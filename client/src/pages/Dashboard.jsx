@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getUserLinks } from '../utils/api'
 import { useAuth } from '../contexts/AuthContext'
 import CreateLinkForm from '../components/CreateLinkForm'
+import UTMGenerator from '../components/UTMGenerator'
 
 export default function Dashboard() {
   const [links, setLinks] = useState([])
@@ -98,6 +99,11 @@ export default function Dashboard() {
       {/* Create Link Form */}
       <div className="mb-12">
         <CreateLinkForm onSuccess={handleLinkCreated} />
+      </div>
+
+      {/* UTM Generator */}
+      <div className="mb-12">
+        <UTMGenerator baseUrl={window.location.origin} />
       </div>
 
       {/* Links List */}

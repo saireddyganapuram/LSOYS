@@ -52,6 +52,36 @@ export default function Analytics() {
     }));
   }
 
+  const exportToCSV = () => {
+    if (!fullAnalyticsData || !fullAnalyticsData.recentClicks) return;
+
+    // Prepare CSV data
+    const csvData = [
+      ['Date', 'Platform', 'Referrer', 'User Agent', 'IP Address'], // Headers
+      ...fullAnalyticsData.recentClicks.map(click => [
+        new Date(click.created_at).toLocaleString(),
+        click.platform,
+        click.referrer || 'N/A',
+        click.user_agent || 'N/A',
+        click.ip_address || 'N/A'
+      ])
+    ];
+
+    // Convert to CSV string
+    const csvContent = csvData.map(row => row.map(field => `"${field}"`).join(',')).join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `analytics-${fullAnalyticsData.link.slug}-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>
   if (error) return <div className="text-red-600 text-center">{error}</div>
 

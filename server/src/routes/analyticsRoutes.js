@@ -73,9 +73,9 @@ router.get('/:linkId', async (req, res) => {
 // Track a click
 router.post('/click', async (req, res) => {
   try {
-    const { linkId, platform, referrer } = req.body;
+    const { linkId, platform, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content } = req.body;
     
-    console.log('Tracking click:', { linkId, platform, referrer });
+    console.log('Tracking click:', { linkId, platform, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content });
 
     if (!linkId || !platform) {
       return res.status(400).json({ error: 'linkId and platform are required' });
@@ -93,7 +93,7 @@ router.post('/click', async (req, res) => {
       return res.status(404).json({ error: 'Link not found' });
     }
 
-    // Record the click
+    // Record the click with UTM parameters
     const { data: click, error: clickError } = await supabase
       .from('clicks')
       .insert({
@@ -101,7 +101,12 @@ router.post('/click', async (req, res) => {
         platform,
         referrer: referrer || null,
         user_agent: req.headers['user-agent'] || null,
-        ip_address: req.ip || req.connection.remoteAddress || null
+        ip_address: req.ip || req.connection.remoteAddress || null,
+        utm_source: utm_source || null,
+        utm_medium: utm_medium || null,
+        utm_campaign: utm_campaign || null,
+        utm_term: utm_term || null,
+        utm_content: utm_content || null
       })
       .select()
       .single();

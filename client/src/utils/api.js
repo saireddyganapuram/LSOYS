@@ -177,12 +177,27 @@ export const getLinkBySlug = async (slug) => {
 
 // Analytics helper functions
 export const trackClick = async (linkId, platform, referrer) => {
+  // Extract UTM parameters from current URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const utmParams = {
+    utm_source: urlParams.get('utm_source'),
+    utm_medium: urlParams.get('utm_medium'),
+    utm_campaign: urlParams.get('utm_campaign'),
+    utm_term: urlParams.get('utm_term'),
+    utm_content: urlParams.get('utm_content')
+  };
+
   const response = await fetch('/api/analytics/click', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ linkId, platform, referrer })
+    body: JSON.stringify({ 
+      linkId, 
+      platform, 
+      referrer,
+      ...utmParams
+    })
   })
   return response.json()
 }
